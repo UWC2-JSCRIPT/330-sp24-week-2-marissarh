@@ -7,9 +7,13 @@ const router = Router({ mergeParams: true });
 router.get('/', async (req, res) => {
     try {
       const calendarId = req.params.calendarId;
+      const calendar = await Calendars.findById(calendarId);
+      if (!calendar) {
+        return res.status(404).json({message: 'Calendar not found.'});
+      }
       const events = await Events.find({calendarId: calendarId}).lean();
       if (!events || events.length === 0){
-        return res.status(404).json({message:'No events found for the calendar.'});
+        return res.status(404).json({message:'No events found for the calendar.'}); // Return 404 status
       }
 
       res.status(200).json(events);
@@ -26,7 +30,7 @@ router.get('/:id', async (req, res) => {
         return res.status(200).json({message: 'Event not found.'});
       } 
       if (event.calendarId.toString() !==req.params.calendarId){
-       return res.status(200).json({message: 'Event not found for this calendar'});
+       return res.status(404).json({message: 'Event not found for this calendar'});
      } 
      res.status(200).json(event);
     }
@@ -97,7 +101,7 @@ router.delete('/:id', async (req, res) => {
     }
     catch (error)
     {
-        console.error(error);
+
         res.status(404).json({message:'Server error'});
     }
 });
