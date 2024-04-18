@@ -7,7 +7,7 @@ module.exports.getAll = async() => {
     const calendars = await Calendars.find({}).lean();
     return calendars;
   } catch (e) {
-    return null;
+    return [ ];
   }
 };
   
@@ -40,7 +40,7 @@ module.exports.updateById = async (id, newData) => {
 
 module.exports.removeById = async (id) => {
   try {
-    const calendar = await Calendars.findByIdAndDelete(id).lean();
+    const calendar = await Calendars.findByIdAndRemove(id).lean();
     return calendar;
   } catch (e) {
     return null;

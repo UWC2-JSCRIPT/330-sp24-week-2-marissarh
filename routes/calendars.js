@@ -32,7 +32,10 @@ router.post("/", async(req, res, next)=>{
     if (!name) {
       return res.status(400).json({message: 'Name is required.'});
     }
-    const newCalendar = await CalendarDAO.create({name});
+    const newCalendar = await CalendarDAO.create(name);
+    if (!newCalendar){
+      return res.status(500).json({ message: 'Failed to create calendar.'});
+    }
     res.status(200).json(newCalendar);
   }catch(e)
 {
