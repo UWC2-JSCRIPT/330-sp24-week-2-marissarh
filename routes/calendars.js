@@ -26,10 +26,44 @@ router.get("/:id", async (req, res, next) => {
   }
 });
 
+router.post("/", async(req, res, next)=>{
+  try{
+    const { name } =req.body;
+    if (!name) {
+      return res.status(400).json({message: 'Name is required.'});
+    }
+    const newCalendar = await CalendarDAO.create(name);
+    if (!newCalendar){
+      return res.status(500).json({ message: 'Failed to create calendar.'});
+    }
+    res.status(200).json(newCalendar);
+  }catch(e)
+{
+  next(e);
+}  
+});
+
+router.put("/:id", async(req, res, next) =>{
+  try {
+    const {name} = req.body;
+    if(!name){
+      return res.status(400).json({message: 'Name is required.'});
+    }
+    const updatedCalendar = await CalendarDAO.updateById(req.params.id, {name});
+    if (updatedCalendar){
+      res.status(200).json(updatedCalendar);
+    } else{
+      res.sendStatus(404);
+    }
+  } catch(e) {
+    next(e);
+  }
+});
+
 router.delete("/:id", async (req, res, next) => {
   try {
-    const calendar = await CalendarDAO.removeById(req.params.id);
-    if (calendar) {
+    const removedCalendar = await CalendarDAO.removeById(req.params.id);
+    if (removedCalendar) {
       res.sendStatus(200);
     } else {
       res.sendStatus(404);
